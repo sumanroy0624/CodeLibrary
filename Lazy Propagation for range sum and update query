@@ -5,31 +5,39 @@ public:
 		seg.resize(4 * n + 1);
 		lazy.resize(4 * n + 1);
 	}
-	void build(vector<ll>&a, int low, int high, int ind) {
+	void build(vector<ll>&a, ll low, ll high, ll ind) {
 		if (low == high) {
 			seg[ind] = a[low];
 			return;
 		}
-		int mid = (low + high) >> 1;
+		ll mid = (low + high) >> 1;
 		build(a, low, mid, ind * 2 + 1);
 		build(a, mid + 1, high, ind * 2 + 2);
 		seg[ind] = (seg[ind * 2 + 1] + seg[ind * 2 + 2]);
 	}
 
-	ll query(int low, int high, int l, int r , int ind) {
+	ll query(ll low, ll high, ll l, ll r , ll ind) {
 		// no overlap
+		if (lazy[ind] != 0) {
+			seg[ind] += (high - low + 1) * lazy[ind];
+			if (low != high) {
+				lazy[ind * 2 + 1] += lazy[ind];
+				lazy[ind * 2 + 2] += lazy[ind];
+			}
+			lazy[ind] = 0;
+		}
 		if (r < low || high < l)return 0;
 		// full overlap
 		else if (low >= l && high <= r) {
 			return seg[ind];
 		} else {
 			ll mid = (low + high) >> 1;
-			int left = query(low, mid, l, r, ind * 2 + 1);
-			int right = query(mid + 1, high, l, r, ind * 2 + 2);
+			ll left = query(low, mid, l, r, ind * 2 + 1);
+			ll right = query(mid + 1, high, l, r, ind * 2 + 2);
 			return (left + right);
 		}
 	}
-	void update(int ind, int  l, int r, ll val, int low, int high) {
+	void update(ll ind, ll  l, ll r, ll val, ll low, ll high) {
 		// update the previous remaining updates
 		// and propogate downwards
 		if (lazy[ind] != 0) {
