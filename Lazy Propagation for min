@@ -17,6 +17,16 @@ public:
 	}
 
 	ll query(int low, int high, int l, int r , int ind) {
+                // update the previous remaining updates
+		// and propogate downwards
+		if (lazy[ind] != 0) {
+			seg[ind] = lazy[ind];
+			if (low != high) {
+				lazy[ind * 2 + 1] = lazy[ind];
+				lazy[ind * 2 + 2] = lazy[ind];
+			}
+			lazy[ind] = 0;
+		}
 		// no overlap
 		if (r < low || high < l)return 1e10;
 		// full overlap
@@ -33,10 +43,10 @@ public:
 		// update the previous remaining updates
 		// and propogate downwards
 		if (lazy[ind] != 0) {
-			seg[ind] += lazy[ind];
+			seg[ind] = lazy[ind];
 			if (low != high) {
-				lazy[ind * 2 + 1] += lazy[ind];
-				lazy[ind * 2 + 2] += lazy[ind];
+				lazy[ind * 2 + 1] = lazy[ind];
+				lazy[ind * 2 + 2] = lazy[ind];
 			}
 			lazy[ind] = 0;
 		}
@@ -47,11 +57,11 @@ public:
 		// complete overlap
 		// l low high r
 		if (l <= low && high <= r) {
-			seg[ind] += val;
+			seg[ind] = val;
 			//  if it is not left node it will have childern
 			if (low != high) {
-				lazy[ind * 2 + 1] += val;
-				lazy[ind * 2 + 2] += val;
+				lazy[ind * 2 + 1] = val;
+				lazy[ind * 2 + 2] = val;
 			}
 			return;
 		}
